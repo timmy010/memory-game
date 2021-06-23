@@ -7,13 +7,18 @@ export default createStore({
     carts: [],
   },
   mutations: {
-    startTimer() {
+    startTimer() { // eslint-disable-line
       console.log('start timer');
+      if (this.state.interval) { return false }
       this.state.interval = setInterval(() => {
         this.state.time = this.state.time + 1; // eslint-disable-line
         if (this.state.time > 5) {
           clearInterval(this.state.interval);
+          this.state.interval = null;
           this.state.time = 0;
+          this.state.carts.forEach((cart) => {
+            cart.visible = false; // eslint-disable-line
+          });
         }
       }, 1000);
     },

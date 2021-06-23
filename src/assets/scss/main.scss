@@ -7,6 +7,14 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  &__title {
+    margin: 0;
+    padding: 0;
+  }
+  &__desc {
+    text-align: left;
+    max-width: 70%;
+  }
   &__start-btn {
     width: 30%;
     margin: 10px;
@@ -23,6 +31,7 @@
     grid-column-gap: 5px;
     grid-row-gap: 5px;
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+    margin-bottom: 10px;
   }
   &__cart {
     position: relative;
