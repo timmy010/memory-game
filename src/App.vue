@@ -1,6 +1,15 @@
 <template>
   <section class="game">
-    <button class="game__start-btn" @click="createdCarts">START</button>
+    <button
+      class="game__start-btn"
+      @click="
+        createdCarts();
+        this.$store.commit('startTimer');
+      "
+    >
+      START
+    </button>
+    <timer />
     <div class="game__table" v-if="carts.length !== 0">
       <div
         class="game__cart"
@@ -16,6 +25,8 @@
 </template>
 
 <script>
+import timer from "@/components/timer.vue";
+
 export default {
   name: "App",
   data() {
@@ -24,6 +35,9 @@ export default {
       firstOpenCart: null,
       secondOpenCart: null,
     };
+  },
+  components: {
+    timer,
   },
   methods: {
     createdCarts() {
