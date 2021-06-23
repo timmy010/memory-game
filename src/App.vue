@@ -6,9 +6,9 @@
         class="game__cart"
         v-for="(item, index) in carts"
         :key="index"
-        @click="reverseCart($event)"
+        @click="reverseCart($event, item)"
       >
-        <div class="game__cart-back"></div>
+        <div class="game__cart-back" v-if="!item.visible"></div>
         {{ item.value }}
       </div>
     </div>
@@ -21,38 +21,62 @@ export default {
   data() {
     return {
       carts: [],
+      firstOpenCart: null,
+      secondOpenCart: null,
     };
   },
   methods: {
     createdCarts() {
-      this.carts = []; // Обнуление массива карточек
-      let carts = [];
+      this.carts = [];
       for (let i = 1; i <= 18; i += 1) {
-        carts.push({
+        this.carts.push({
+          value: Number(i),
+          visible: false,
+        });
+        this.carts.push({
           value: Number(i),
           visible: false,
         });
       }
-      carts = [...carts, ...carts]; // формирование сдвоенного массива
-
-      // Перемешивание
-      let currentIndex = carts.length;
+      let currentIndex = this.carts.length;
       let temporaryValue;
       let randomIndex;
 
       while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
-        temporaryValue = carts[currentIndex];
-        carts[currentIndex] = carts[randomIndex];
-        carts[randomIndex] = temporaryValue;
+        temporaryValue = this.carts[currentIndex];
+        this.carts[currentIndex] = this.carts[randomIndex];
+        this.carts[randomIndex] = temporaryValue;
       }
-
-      this.carts = [...this.carts, ...carts];
+      console.log(this.carts);
     },
-    reverseCart(e) {
-      console.log(typeof Number(e.target.textContent));
+    /* eslint-disable */
+    reverseCart(e, item) {
+      item.visible = true;
+      if (!this.firstOpenCart) {
+        this.firstOpenCart = e.target;
+      } else if (!this.secondOpenCart) {
+        this.secondOpenCart = e.target;
+      } else {
+        if (Number(this.firstOpenCart.textContent) === Number(this.secondOpenCart.textContent)) {
+          this.firstOpenCart.remove();
+          this.secondOpenCart.remove();
+          this.firstOpenCart = null;
+          this.secondOpenCart = null;
+          this.carts.forEach((cart) => {
+            cart.visible = false;
+          });
+        } else {
+          this.firstOpenCart = null;
+          this.secondOpenCart = null;
+          this.carts.forEach((cart) => {
+            cart.visible = false;
+          });
+        }
+      }
     },
+    /* eslint-enable */
   },
 };
 </script>
