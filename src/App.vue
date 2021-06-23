@@ -3,8 +3,8 @@
     <button
       class="game__start-btn"
       @click="
-        createdCarts();
-        this.$store.commit('startTimer');
+        this.createdCarts();
+        this.startTimer();
       "
     >
       START
@@ -26,45 +26,24 @@
 
 <script>
 import timer from "@/components/timer.vue";
+import { mapMutations, mapState } from "vuex";
 
 export default {
   name: "App",
   data() {
     return {
-      carts: [],
       firstOpenCart: null,
       secondOpenCart: null,
     };
+  },
+  computed: {
+    ...mapState(["carts"]),
   },
   components: {
     timer,
   },
   methods: {
-    createdCarts() {
-      this.carts = [];
-      for (let i = 1; i <= 18; i += 1) {
-        this.carts.push({
-          value: Number(i),
-          visible: false,
-        });
-        this.carts.push({
-          value: Number(i),
-          visible: false,
-        });
-      }
-      let currentIndex = this.carts.length;
-      let temporaryValue;
-      let randomIndex;
-
-      while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = this.carts[currentIndex];
-        this.carts[currentIndex] = this.carts[randomIndex];
-        this.carts[randomIndex] = temporaryValue;
-      }
-      console.log(this.carts);
-    },
+    ...mapMutations(["createdCarts", "startTimer"]),
     /* eslint-disable */
     reverseCart(e, item) {
       item.visible = true;
