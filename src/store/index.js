@@ -5,16 +5,23 @@ export default createStore({
     time: 0,
     interval: null,
     carts: [],
+    results: [],
   },
   mutations: {
+    startGameOver() {
+      const id = this.state.results.length === 0 ? 1 : this.state.results[this.state.results.length - 1].id + 1;
+      this.state.results.push({
+        id,
+        value: this.state.time,
+      });
+      clearInterval(this.state.interval);
+      this.state.interval = null;
+      this.state.time = 0;
+    },
     startTimer() {
       console.log('start timer');
       this.state.interval = setInterval(() => {
         this.state.time = this.state.time + 1; // eslint-disable-line
-        if (this.state.time > 5) {
-          clearInterval(this.state.interval);
-          this.state.time = 0;
-        }
       }, 1000);
     },
     createdCarts() {

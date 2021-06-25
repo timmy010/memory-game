@@ -34,38 +34,51 @@ export default {
     return {
       firstOpenCart: null,
       secondOpenCart: null,
+      timerId: null,
     };
   },
   computed: {
-    ...mapState(["carts"]),
+    ...mapState(["carts", "isGameOver"]),
   },
   components: {
     timer,
   },
   methods: {
-    ...mapMutations(["createdCarts", "startTimer"]),
+    ...mapMutations(["createdCarts", "startTimer", "startGameOver"]),
+    clearCarts() {
+      this.firstOpenCart = null;
+      this.secondOpenCart = null;
+      this.carts.forEach((cart) => {
+        cart.visible = false; // eslint-disable-line
+      });
+    },
     /* eslint-disable */
     reverseCart(e, item) {
       item.visible = true;
       if (!this.firstOpenCart) {
         this.firstOpenCart = e.target;
+        this.timerId = setTimeout(() => {
+          if (!this.secondOpenCart) {
+            clearTimeout(this.timerId);
+            this.timerId = null;
+            this.clearCarts();
+          }
+        }, 5000);
       } else if (!this.secondOpenCart) {
         this.secondOpenCart = e.target;
+        clearTimeout(this.timerId);
+        this.timerId = null;
       } else {
         if (Number(this.firstOpenCart.textContent) === Number(this.secondOpenCart.textContent)) {
           this.firstOpenCart.remove();
           this.secondOpenCart.remove();
-          this.firstOpenCart = null;
-          this.secondOpenCart = null;
-          this.carts.forEach((cart) => {
-            cart.visible = false;
-          });
+          if (this.carts.length != 0) {
+            this.clearCarts();
+          } else {
+            this.startGameOver();
+          }
         } else {
-          this.firstOpenCart = null;
-          this.secondOpenCart = null;
-          this.carts.forEach((cart) => {
-            cart.visible = false;
-          });
+          this.clearCarts();
         }
       }
     },
