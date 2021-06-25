@@ -4,11 +4,13 @@ export default createStore({
   state: {
     time: 0,
     interval: null,
+    isGameOver: false,
     carts: [],
     results: [],
   },
   mutations: {
     startGameOver() {
+      this.state.isGameOver = true;
       const id = this.state.results.length === 0 ? 1 : this.state.results[this.state.results.length - 1].id + 1;
       this.state.results.push({
         id,
@@ -19,14 +21,16 @@ export default createStore({
       this.state.time = 0;
     },
     startTimer() {
-      console.log('start timer');
+      this.state.isGameOver = false;
       this.state.interval = setInterval(() => {
         this.state.time = this.state.time + 1; // eslint-disable-line
       }, 1000);
     },
     createdCarts() {
-      this.state.carts = [];
+      console.log('create carts');
+      this.state.carts.length = 0;
       for (let i = 1; i <= 18; i += 1) {
+        // for (let i = 1; i <= 4; i += 1) {
         this.state.carts.push({
           value: Number(i),
           visible: false,
@@ -47,7 +51,7 @@ export default createStore({
         this.state.carts[currentIndex] = this.state.carts[randomIndex];
         this.state.carts[randomIndex] = temporaryValue;
       }
-      console.log(this.state.carts);
+      // console.log(this.state.carts);
     },
   },
 });

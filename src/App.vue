@@ -5,12 +5,16 @@
       @click="
         this.createdCarts();
         this.startTimer();
+        this.showCarts();
       "
     >
       START
     </button>
+    <p class="game__status" v-if="status">
+      {{ status }}
+    </p>
     <timer />
-    <div class="game__table" v-if="carts.length !== 0">
+    <div class="game__table" :class="{ wait: freezeClick }" v-if="carts.length !== 0">
       <div
         class="game__cart"
         v-for="(item, index) in carts"
@@ -21,11 +25,13 @@
         {{ item.value }}
       </div>
     </div>
+    <gameResultsTable v-if="this.results.length !== 0" :results="this.results" />
   </section>
 </template>
 
 <script>
 import timer from "@/components/timer.vue";
+import gameResultsTable from "@/components/gameResultsTable.vue";
 import { mapMutations, mapState } from "vuex";
 
 export default {
@@ -35,16 +41,30 @@ export default {
       firstOpenCart: null,
       secondOpenCart: null,
       timerId: null,
+      freezeClick: false,
     };
   },
   computed: {
-    ...mapState(["carts", "isGameOver"]),
+    ...mapState(["carts", "isGameOver", "results"]),
+    status() {
+      let statusStr = "";
+      if (this.isGameOver) {
+        statusStr = "Поздравляем! Игра закончена! Для старта новой игры нажмите Start";
+      } else if (this.carts.length === 0) {
+        statusStr = "Для старта игры нажмите Start";
+      }
+      return statusStr;
+    },
   },
   components: {
     timer,
+    gameResultsTable,
   },
   methods: {
     ...mapMutations(["createdCarts", "startTimer", "startGameOver"]),
+    showCarts() {
+      console.log(this.carts);
+    },
     clearCarts() {
       this.firstOpenCart = null;
       this.secondOpenCart = null;
@@ -64,21 +84,30 @@ export default {
             this.clearCarts();
           }
         }, 5000);
-      } else if (!this.secondOpenCart) {
+      } else {
         this.secondOpenCart = e.target;
         clearTimeout(this.timerId);
         this.timerId = null;
-      } else {
+
         if (Number(this.firstOpenCart.textContent) === Number(this.secondOpenCart.textContent)) {
           this.firstOpenCart.remove();
           this.secondOpenCart.remove();
-          if (this.carts.length != 0) {
+          if (document.querySelector(".game__cart")) {
+            this.freezeClick = true;
+            setTimeout(() => {
+              this.clearCarts();
+              this.freezeClick = false;
+            }, 1000);
             this.clearCarts();
           } else {
             this.startGameOver();
           }
         } else {
-          this.clearCarts();
+          this.freezeClick = true;
+          setTimeout(() => {
+            this.clearCarts();
+            this.freezeClick = false;
+          }, 1000);
         }
       }
     },
