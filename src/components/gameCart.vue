@@ -1,17 +1,12 @@
 <template>
-  <div
-    class="game__cart"
-    v-for="(item, index) in carts"
-    :key="index"
-    @click="reverseCart($event, item)"
-  >
+  <div class="game__cart" v-for="item in carts" :key="item.id" @click="reverseCart($event, item)">
     <div class="game__cart-back" v-if="!item.visible"></div>
     {{ item.value }}
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   data() {
@@ -28,6 +23,7 @@ export default {
     ...mapState(["carts"]),
   },
   methods: {
+    ...mapMutations(["startGameOver", "deleteCarts"]),
     clearCarts() {
       this.firstOpenCart = null;
       this.secondOpenCart = null;
@@ -39,7 +35,7 @@ export default {
     reverseCart(e, item) {
       item.visible = true;
       if (!this.firstOpenCart) {
-        this.firstOpenCart = e.target;
+        this.firstOpenCart = item;
         this.timerId = setTimeout(() => {
           if (!this.secondOpenCart) {
             clearTimeout(this.timerId);
@@ -48,14 +44,14 @@ export default {
           }
         }, 5000);
       } else {
-        this.secondOpenCart = e.target;
+        this.secondOpenCart = item;
         clearTimeout(this.timerId);
         this.timerId = null;
 
-        if (Number(this.firstOpenCart.textContent) === Number(this.secondOpenCart.textContent)) {
-          this.firstOpenCart.remove();
-          this.secondOpenCart.remove();
-          if (document.querySelector(".game__cart")) {
+        if (Number(this.firstOpenCart.value) === Number(this.secondOpenCart.value)) {
+          this.deleteCarts(this.firstOpenCart.id);
+          this.deleteCarts(this.secondOpenCart.id);
+          if (document.querySelector(".game__cart") && this.carts.length !== 0) {
             this.$emit("update:freezeClick", true);
             setTimeout(() => {
               this.clearCarts();

@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import { v4 as uuidv4 } from 'uuid';
 
 export default createStore({
   state: {
@@ -27,15 +28,15 @@ export default createStore({
       }, 1000);
     },
     createdCarts() {
-      console.log('create carts');
       this.state.carts.length = 0;
       for (let i = 1; i <= 18; i += 1) {
-        // for (let i = 1; i <= 4; i += 1) {
         this.state.carts.push({
+          id: uuidv4(),
           value: Number(i),
           visible: false,
         });
         this.state.carts.push({
+          id: uuidv4(),
           value: Number(i),
           visible: false,
         });
@@ -51,7 +52,9 @@ export default createStore({
         this.state.carts[currentIndex] = this.state.carts[randomIndex];
         this.state.carts[randomIndex] = temporaryValue;
       }
-      // console.log(this.state.carts);
+    },
+    deleteCarts(state, cartId) {
+      this.state.carts = this.state.carts.filter((item) => item.id !== cartId);
     },
   },
 });

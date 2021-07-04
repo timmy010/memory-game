@@ -1,18 +1,33 @@
 <template>
   <section class="game">
+    <h1 class="game__title">Игра в пары</h1>
+    <ul class="game__rules">
+      <li>Задача игры - найти все парные карточки</li>
+      <li>
+        При клике на карточку карточка открывается. В течение 5 секунд необходимо нажать на вторую
+        карточку. Если в течение 5 секунд не кликните на вторую карточку, первая карточка
+        закрывается.
+      </li>
+      <li>
+        Если при клике на вторую карточку находите пару, то парные карты удаляются с игрового поля.
+      </li>
+      <li>
+        Игра заканчивается когда найдены все пары. После окончания игры показывается таблица с
+        результатом - временем прошедним с момента начала игры.
+      </li>
+    </ul>
+    <p class="game__status" v-if="status">
+      {{ status }}
+    </p>
     <button
       class="game__start-btn"
       @click="
         this.createdCarts();
         this.startTimer();
-        this.showCarts();
       "
     >
-      START
+      НАЧАТЬ ИГРУ
     </button>
-    <p class="game__status" v-if="status">
-      {{ status }}
-    </p>
     <timer />
     <div class="game__table" :class="{ wait: freezeClick }" v-if="carts.length !== 0">
       <gameCart v-model:freezeClick="freezeClick" />
@@ -39,9 +54,9 @@ export default {
     status() {
       let statusStr = "";
       if (this.isGameOver) {
-        statusStr = "Поздравляем! Игра закончена! Для старта новой игры нажмите Start";
+        statusStr = "Поздравляем! Игра закончена! Для старта новой игры нажмите кнопку Начать игру";
       } else if (this.carts.length === 0) {
-        statusStr = "Для старта игры нажмите Start";
+        statusStr = "Для старта игры нажмите кнопку Начать игру";
       }
       return statusStr;
     },
@@ -53,9 +68,6 @@ export default {
   },
   methods: {
     ...mapMutations(["createdCarts", "startTimer", "startGameOver"]),
-    showCarts() {
-      console.log(this.carts);
-    },
   },
 };
 </script>
